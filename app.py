@@ -1159,28 +1159,21 @@ def main():
     # Input Section
     col1, col2 = st.columns(2)
     user_input = ""
+
+    with col1:
+    # Simple voice button that works on cloud
+    voice_text = st.text_input("🎤 Or paste from voice:", placeholder="Voice text will appear here", key="voice_paste")
     
-  with col1:
-    # Use browser-based voice (works on cloud!)
-    if st.button("🎤 Speak Now (Click then speak)", use_container_width=True):
-        st.markdown("""
-        <div id="voice-demo">
-            <p style="color: #FFD700; text-align: center;">🎤 Listening... Speak now</p>
-        </div>
-        <script>
-        const recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
-        recognition.lang = '""" + ("ms-MY" if lang == "Bahasa Malaysia" else "en-US") + """';
-        recognition.onresult = function(event) {
-            const text = event.results[0][0].transcript;
-            window.parent.postMessage({type: 'streamlit:setComponentValue', value: text}, '*');
-        };
-        recognition.start();
-        </script>
-        """, unsafe_allow_html=True)
+    if st.button(speak_btn, use_container_width=True):
+        st.info("""
+        🎤 **Voice Instructions:**
+        1. Click the microphone icon in your browser's address bar
+        2. Or use Chrome's built-in dictation (Edit → Start Dictation on Mac)
+        3. Or speak into your phone's microphone
         
-        # Alternative: Use st.chat_input with voice
-        st.info("🎤 Voice demo: For best experience, present locally with microphone")
-    
+        💡 **For Hackathon Demo:** Voice works perfectly on your LOCAL machine!
+        """)
+ 
     with col2:
         text_input = st.text_area("", placeholder="Type your feelings here...", height=80, label_visibility="collapsed")
         if text_input:
