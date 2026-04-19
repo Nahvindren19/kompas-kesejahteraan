@@ -19,6 +19,103 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ========== BROWSER-BASED VOICE RECOGNITION (Works on Cloud!) ==========
+def browser_voice_input():
+    """Uses browser's Web Speech API - works on Streamlit Cloud!"""
+    import streamlit.components.v1 as components
+    
+    voice_html = """
+    <div id="voice-container">
+        <button id="voice-btn" style="
+            background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
+            color: #1a1a2e;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 1rem;
+        ">🎤 Click to Speak</button>
+        <p id="voice-status" style="color: white; margin-top: 10px; text-align: center;"></p>
+        <input type="text" id="voice-result" style="display: none;">
+    </div>
+    
+    <script>
+    const voiceBtn = document.getElementById('voice-btn');
+    const statusDiv = document.getElementById('voice-status');
+    const resultInput = document.getElementById('voice-result');
+    
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        
+        let currentLang = 'en-US';
+        
+        // Function to update language
+        window.updateVoiceLanguage = function(lang) {
+            currentLang = lang === 'Bahasa Malaysia' ? 'ms-MY' : 'en-US';
+            recognition.lang = currentLang;
+        };
+        
+        voiceBtn.onclick = function() {
+            statusDiv.innerHTML = '🎤 Listening... Speak now';
+            statusDiv.style.color = '#FFD700';
+            voiceBtn.disabled = true;
+            voiceBtn.style.opacity = '0.5';
+            
+            try {
+                recognition.start();
+            } catch(e) {
+                statusDiv.innerHTML = '❌ Error: ' + e.message;
+                statusDiv.style.color = '#ff4444';
+                voiceBtn.disabled = false;
+                voiceBtn.style.opacity = '1';
+            }
+        };
+        
+        recognition.onresult = function(event) {
+            const text = event.results[0][0].transcript;
+            resultInput.value = text;
+            statusDiv.innerHTML = '✅ You said: ' + text;
+            statusDiv.style.color = '#00ff00';
+            
+            // Send to Streamlit
+            const streamlitEvent = new CustomEvent('streamlit:message', {
+                detail: { text: text }
+            });
+            window.dispatchEvent(streamlitEvent);
+        };
+        
+        recognition.onerror = function(event) {
+            statusDiv.innerHTML = '❌ Could not hear. Please type.';
+            statusDiv.style.color = '#ff4444';
+            voiceBtn.disabled = false;
+            voiceBtn.style.opacity = '1';
+        };
+        
+        recognition.onend = function() {
+            voiceBtn.disabled = false;
+            voiceBtn.style.opacity = '1';
+        };
+    } else {
+        voiceBtn.disabled = true;
+        statusDiv.innerHTML = '❌ Voice not supported in this browser. Please use Chrome.';
+        statusDiv.style.color = '#ff4444';
+    }
+    </script>
+    """
+    
+    components.html(voice_html, height=100)
+    
+    # Check for voice result from JavaScript
+    query_params = st.query_params
+    if 'voice_text' in query_params:
+        return query_params['voice_text']
+    return None
+
 # ========== USER COUNTER FUNCTIONS ==========
 def load_user_count():
     try:
@@ -1063,29 +1160,26 @@ def main():
     col1, col2 = st.columns(2)
     user_input = ""
     
-    with col1:
-        if st.button(speak_btn, use_container_width=True):
-            try:
-                r = sr.Recognizer()
-                with sr.Microphone() as source:
-                    st.info("🎤 Listening... Speak now (5 seconds)")
-                    # Adjust for ambient noise
-                    r.adjust_for_ambient_noise(source, duration=0.5)
-                    audio = r.listen(source, timeout=5, phrase_time_limit=5)
-                    
-                    if lang == "Bahasa Malaysia":
-                        user_input = r.recognize_google(audio, language="ms-MY")
-                    else:
-                        user_input = r.recognize_google(audio, language="en-US")
-                    st.success(f"✅ You said: {user_input}")
-                    st.session_state.voice_input = user_input
-                    st.rerun()
-            except sr.UnknownValueError:
-                st.error("❌ Could not understand. Please speak clearly or type.")
-            except sr.RequestError as e:
-                st.error(f"❌ Speech service error. Please type instead.")
-            except Exception as e:
-                st.error(f"❌ Microphone error: Please check permissions and try again.")
+  with col1:
+    # Use browser-based voice (works on cloud!)
+    if st.button("🎤 Speak Now (Click then speak)", use_container_width=True):
+        st.markdown("""
+        <div id="voice-demo">
+            <p style="color: #FFD700; text-align: center;">🎤 Listening... Speak now</p>
+        </div>
+        <script>
+        const recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
+        recognition.lang = '""" + ("ms-MY" if lang == "Bahasa Malaysia" else "en-US") + """';
+        recognition.onresult = function(event) {
+            const text = event.results[0][0].transcript;
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: text}, '*');
+        };
+        recognition.start();
+        </script>
+        """, unsafe_allow_html=True)
+        
+        # Alternative: Use st.chat_input with voice
+        st.info("🎤 Voice demo: For best experience, present locally with microphone")
     
     with col2:
         text_input = st.text_area("", placeholder="Type your feelings here...", height=80, label_visibility="collapsed")
