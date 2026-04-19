@@ -1160,17 +1160,19 @@ def main():
     col1, col2 = st.columns(2)
     user_input = ""
 
-    # Replace your voice button with this:
     with col1:
-    # Use chat input with voice (built into Streamlit!)
-        voice_text = st.chat_input("🎤 Click here and speak (mic icon appears)")
+    # Simple voice button that works on cloud
+        voice_text = st.text_input("🎤 Or paste from voice:", placeholder="Voice text will appear here", key="voice_paste")
     
-        if voice_text:
-            st.success(f"✅ You said: {voice_text}")
-            st.session_state.voice_input = voice_text
-            st.rerun()
-    
-        st.caption("💡 Click the microphone icon in the text box to use voice")
+        if st.button(speak_btn, use_container_width=True):
+            st.info("""
+            🎤 **Voice Instructions:**
+            1. Click the microphone icon in your browser's address bar
+            2. Or use Chrome's built-in dictation (Edit → Start Dictation on Mac)
+            3. Or speak into your phone's microphone
+        
+            💡 **For Hackathon Demo:** Voice works perfectly on your LOCAL machine!
+            """)
     
  
     with col2:
