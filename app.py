@@ -1165,14 +1165,14 @@ def main():
         voice_text = st.text_input("🎤 Or paste from voice:", placeholder="Voice text will appear here", key="voice_paste")
     
         if st.button(speak_btn, use_container_width=True):
-        st.info("""
-        🎤 **Voice Instructions:**
-        1. Click the microphone icon in your browser's address bar
-        2. Or use Chrome's built-in dictation (Edit → Start Dictation on Mac)
-        3. Or speak into your phone's microphone
+            st.info("""
+            🎤 **Voice Instructions:**
+            1. Click the microphone icon in your browser's address bar
+            2. Or use Chrome's built-in dictation (Edit → Start Dictation on Mac)
+            3. Or speak into your phone's microphone
         
-        💡 **For Hackathon Demo:** Voice works perfectly on your LOCAL machine!
-        """)
+            💡 **For Hackathon Demo:** Voice works perfectly on your LOCAL machine!
+            """)
     
  
     with col2:
