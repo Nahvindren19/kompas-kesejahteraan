@@ -1161,16 +1161,16 @@ def main():
     user_input = ""
 
     # Replace your voice button with this:
-with col1:
+    with col1:
     # Use chat input with voice (built into Streamlit!)
-    voice_text = st.chat_input("🎤 Click here and speak (mic icon appears)")
+        voice_text = st.chat_input("🎤 Click here and speak (mic icon appears)")
     
-    if voice_text:
-        st.success(f"✅ You said: {voice_text}")
-        st.session_state.voice_input = voice_text
-        st.rerun()
+        if voice_text:
+            st.success(f"✅ You said: {voice_text}")
+            st.session_state.voice_input = voice_text
+            st.rerun()
     
-    st.caption("💡 Click the microphone icon in the text box to use voice")
+        st.caption("💡 Click the microphone icon in the text box to use voice")
     
  
     with col2:
