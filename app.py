@@ -1162,9 +1162,9 @@ def main():
 
     with col1:
     # Simple voice button that works on cloud
-    voice_text = st.text_input("🎤 Or paste from voice:", placeholder="Voice text will appear here", key="voice_paste")
+        voice_text = st.text_input("🎤 Or paste from voice:", placeholder="Voice text will appear here", key="voice_paste")
     
-    if st.button(speak_btn, use_container_width=True):
+        if st.button(speak_btn, use_container_width=True):
         st.info("""
         🎤 **Voice Instructions:**
         1. Click the microphone icon in your browser's address bar
@@ -1173,6 +1173,7 @@ def main():
         
         💡 **For Hackathon Demo:** Voice works perfectly on your LOCAL machine!
         """)
+    
  
     with col2:
         text_input = st.text_area("", placeholder="Type your feelings here...", height=80, label_visibility="collapsed")
