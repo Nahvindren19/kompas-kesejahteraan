@@ -245,6 +245,27 @@ st.markdown("""
     .stRadio label:hover {
         background: rgba(255,215,0,0.3);
     }
+
+    /* Fix for download buttons */
+.stDownloadButton button {
+    background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%) !important;
+    color: #1a1a2e !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 50px !important;
+    padding: 0.75rem 1.5rem !important;
+}
+
+.stDownloadButton button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,215,0,0.4) !important;
+    color: #1a1a2e !important;
+}
+
+/* Fix for caption text */
+.stCaption {
+    color: #FFD700 !important;
+}
     
     /* Hero section */
     .hero {
